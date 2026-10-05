@@ -9,7 +9,7 @@ if (-not $npm) {
 
 $frontendEnv = Join-Path $webRoot '.env.local'
 if (-not (Test-Path $frontendEnv)) {
-    Copy-Item (Join-Path $webRoot '.env.example') $frontendEnv
+    # Copy-Item (Join-Path $webRoot '.env.example') $frontendEnv
     Write-Host 'Created apps/web/.env.local from .env.example.' -ForegroundColor Yellow
 }
 
