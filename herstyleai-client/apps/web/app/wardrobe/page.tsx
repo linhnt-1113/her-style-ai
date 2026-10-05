@@ -11,6 +11,23 @@ import { categoryLabel, colorLabel, patternLabel, titleCase } from "@/lib/format
 
 const filters = [["all", "Tất cả"], ["top", "Áo"], ["bottom", "Quần"], ["dress", "Váy"], ["outerwear", "Khoác"], ["shoes", "Giày"], ["accessory", "Túi & phụ kiện"]] as const;
 
+// TEST ITEM
+const MOCK_ITEMS: WardrobeItem[] = [
+  {
+    item_id: "mock-1",
+    image_url: "/wardrobe/mock-shirt.jpg",
+    image_path: "/wardrobe/mock-shirt.jpg",
+    category: "top",
+    subcategory: "Áo sơ mi",
+    color: "white",
+    pattern: "solid",
+    style_tags: ["thanh lịch", "công sở"],
+    last_styled_at: null,
+    styling_available_at: null,
+    styling_cooldown_active: false,
+  },
+];
+
 function imageFor(item: WardrobeItem) {
   return resolveMediaUrl(item.transparent_image_url ?? item.transparent_url ?? item.model_url ?? item.image_url ?? item.image_path);
 }
@@ -71,7 +88,7 @@ function stylingStatus(item: WardrobeItem) {
 }
 
 export default function WardrobePage() {
-  const [items, setItems] = useState<WardrobeItem[]>([]);
+  const [items, setItems] = useState<WardrobeItem[]>(MOCK_ITEMS);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -80,7 +97,9 @@ export default function WardrobePage() {
   useEffect(() => {
     let active = true;
     api.getWardrobe().then((result) => {
-      if (active) setItems(result.items ?? []);
+      if (active) {
+        setItems(result.items?.length ? result.items : MOCK_ITEMS);
+      }
     }).catch((reason) => {
       if (active) setError(reason instanceof Error ? reason.message : "Không tải được tủ đồ.");
     }).finally(() => {

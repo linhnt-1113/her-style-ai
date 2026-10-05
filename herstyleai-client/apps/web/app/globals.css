@@ -343,3 +343,17 @@ body:has(.wardrobe-page) .site-header{
   border:1px solid #a2c7f5;
 }
 .content-page.planner-page .page-heading p{color:#5a6b88}
+
+/* ===== Thẻ trang phục: viền dày hơn, nền hồng nhạt ===== */
+.cloth-card{
+  background:#ffffff;              /* hồng nhạt */
+  border:3.0px solid #dbecff;      /* viền dày hơn*/
+  border-radius:18px;
+  padding:12px;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.cloth-card:hover{
+  transform:translateY(-3px);
+  border-color:#dbecff;
+  box-shadow:0 12px 28px rgba(200,100,150,.18);
+}
