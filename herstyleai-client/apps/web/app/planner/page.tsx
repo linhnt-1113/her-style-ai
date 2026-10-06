@@ -6,6 +6,8 @@ import { ProtectedMediaImage } from "@/components/ProtectedMediaImage";
 import { api, cacheWeeklyRecommendation, readCachedWeeklyRecommendation, resolveMediaUrl, ScheduleDay, WeeklyResponse, WardrobeItem } from "@/lib/api";
 import { categoryLabel, colorLabel, outfitTitle, patternLabel, temperatureLabel, titleCase } from "@/lib/format";
 
+const PER_PAGE = 3;
+
 function imageFor(item: WardrobeItem) {
   return resolveMediaUrl([item.transparent_image_url, item.transparent_url, item.model_url, item.image_url, item.image_path].find((value): value is string => typeof value === "string"));
 }
@@ -36,6 +38,7 @@ function DayOutfitDialog({ day, onClose, onRegenerate, regenerating }: { day: Sc
 }
 
 export default function PlannerPage() {
+  const [page, setPage] = useState(0);
   const [weekly, setWeekly] = useState<WeeklyResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -142,9 +145,61 @@ export default function PlannerPage() {
   }
 
   const days = weekly?.schedule ?? [];
-  return <div className="content-page planner-page">
-    <div className="page-heading"><div><h1>Lịch phối đồ tuần này</h1><p>AI đã tạo lịch phối đồ dựa trên thời tiết và tủ đồ của bạn</p></div><button className="btn primary" type="button" onClick={() => void generate()} disabled={loading} aria-busy={loading}>{loading ? "Đang đổi bộ…" : "Đổi bộ phối"}<Icon name="sparkle" size={16} /></button></div>
-    {loading ? <div className="empty-state"><h3>Đang tải lịch phối đồ…</h3></div> : error ? <div className="planner-error"><Icon name="sparkle" size={22} /><div><strong>Chưa tạo được lịch tuần</strong><p>{error}</p></div><button className="btn ghost" type="button" onClick={loadWeekly}>Thử lại</button></div> : <div className="week-grid">{days.map((day, index) => <DayCard key={day.day} day={day} active={index === 0} onOpen={() => setSelectedDay(day)} />)}</div>}
-    {selectedDay ? <DayOutfitDialog day={selectedDay} onClose={() => setSelectedDay(null)} onRegenerate={() => void regenerateDay(selectedDay)} regenerating={regeneratingDay === selectedDay.day} /> : null}
-  </div>;
+  const pages: ScheduleDay[][] = [];
+  for (let i = 0; i < days.length; i += PER_PAGE) pages.push(days.slice(i, i + PER_PAGE));
+  const lastPage = Math.max(pages.length - 1, 0);
+  const currentPage = Math.min(page, lastPage);
+
+  return (
+    <div className="content-page planner-page">
+      <div className="page-heading">
+        <div>
+          <h1>Lịch phối đồ tuần này</h1>
+          <p>AI đã tạo lịch phối đồ dựa trên thời tiết và tủ đồ của bạn</p>
+        </div>
+        <button className="btn primary" type="button" onClick={() => void generate()} disabled={loading} aria-busy={loading}>
+          {loading ? "Đang đổi bộ…" : "Đổi bộ phối"}
+          <Icon name="sparkle" size={16} />
+        </button>
+      </div>
+      
+      {/* KHỐI LOADING ĐÃ ĐƯỢC ĐÓNG ĐÚNG CÁCH */}
+      {loading ? (
+        <div className="empty-state">
+          <h3>Đang tải lịch phối đồ…</h3>
+        </div>
+      ) : error ? (
+        <div className="planner-error">
+          <Icon name="sparkle" size={22} />
+          <div>
+            <strong>Chưa tạo được lịch tuần</strong>
+            <p>{error}</p>
+          </div>
+          <button className="btn ghost" type="button" onClick={loadWeekly}>Thử lại</button>
+        </div>
+      ) : (
+        <div className="week-carousel">
+          <button type="button" className="week-arrow prev" onClick={() => setPage(Math.max(currentPage - 1, 0))} disabled={currentPage === 0} aria-label="Trang trước">‹</button>
+          <div className="week-viewport">
+            <div className="week-track" style={{ transform: `translateX(-${currentPage * 100}%)` }}>
+              {pages.map((group, pageIndex) => (
+                <div className="week-page" key={pageIndex}>
+                  {group.map((day) => <DayCard key={day.day} day={day} active={day.day === 1} onOpen={() => setSelectedDay(day)} />)}
+                </div>
+              ))}
+            </div>
+          </div>
+          <button type="button" className="week-arrow next" onClick={() => setPage(Math.min(currentPage + 1, lastPage))} disabled={currentPage === lastPage} aria-label="Trang sau">›</button>
+        </div>
+      )} 
+
+      {pages.length > 1 ? (
+        <div className="week-dots">
+          {pages.map((_, i) => <button key={i} type="button" className={i === currentPage ? "on" : ""} onClick={() => setPage(i)} aria-label={`Trang ${i + 1}`} />)}
+        </div>
+      ) : null}
+
+      {selectedDay ? <DayOutfitDialog day={selectedDay} onClose={() => setSelectedDay(null)} onRegenerate={() => void regenerateDay(selectedDay)} regenerating={regeneratingDay === selectedDay.day} /> : null}
+    </div>
+  );
 }
