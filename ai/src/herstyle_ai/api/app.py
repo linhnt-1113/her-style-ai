@@ -342,6 +342,11 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list(settings.frontend_origins),
+    allow_origin_regex=(
+        r"^http://(localhost|127\.0\.0\.1|10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2}):3000$"
+        if settings.app_env == "development"
+        else None
+    ),
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
@@ -349,7 +354,9 @@ app.add_middleware(
 )
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=list(settings.trusted_hosts),
+    allowed_hosts=(
+        ["*"] if settings.app_env == "development" else list(settings.trusted_hosts)
+    ),
 )
 
 

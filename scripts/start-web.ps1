@@ -23,4 +23,8 @@ if (-not (Test-Path (Join-Path $webRoot 'node_modules'))) {
 }
 
 Write-Host 'Starting HerStyle AI web at http://localhost:3000 ...' -ForegroundColor Green
-& $npm.Source run dev
+$lanAddresses = @(& node -e "const os=require('node:os'); for (const list of Object.values(os.networkInterfaces())) for (const item of list ?? []) if (item.family === 'IPv4' && !item.internal) console.log(item.address)")
+foreach ($address in $lanAddresses) {
+    Write-Host "Mobile (same Wi-Fi): http://${address}:3000" -ForegroundColor Cyan
+}
+& $npm.Source run dev -- --hostname 0.0.0.0

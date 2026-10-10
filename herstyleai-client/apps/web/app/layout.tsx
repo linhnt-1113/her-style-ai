@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./phase5b.css";
@@ -28,6 +28,12 @@ const lora = localFont({
 export const metadata: Metadata = {
   title: "HerStyle AI",
   description: "Digital wardrobe and AI outfit stylist"
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

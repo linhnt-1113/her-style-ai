@@ -281,14 +281,18 @@ const configuredApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 if (!configuredApiBaseUrl && process.env.NODE_ENV === "production") {
   throw new Error("NEXT_PUBLIC_API_BASE_URL must be set for production builds");
 }
-const API_BASE_URL = (
-  configuredApiBaseUrl ?? "http://127.0.0.1:8000"
-).replace(/\/$/, "");
+function apiBaseUrl() {
+  if (configuredApiBaseUrl) return configuredApiBaseUrl.replace(/\/$/, "");
+  if (typeof window !== "undefined") {
+    return `${window.location.protocol}//${window.location.hostname}:8000`;
+  }
+  return "http://127.0.0.1:8000";
+}
 
 export function resolveMediaUrl(value?: string | null): string | null {
   if (!value) return null;
   if (/^https?:\/\//i.test(value)) return value;
-  return `${API_BASE_URL}${value.startsWith("/") ? value : `/${value}`}`;
+  return `${apiBaseUrl()}${value.startsWith("/") ? value : `/${value}`}`;
 }
 
 function messageFromPayload(payload: unknown, fallback: string): string {
@@ -325,7 +329,7 @@ async function performRequest<T>(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
+    const response = await fetch(`${apiBaseUrl()}${path}`, {
       ...fetchInit,
       credentials: "include",
       headers,

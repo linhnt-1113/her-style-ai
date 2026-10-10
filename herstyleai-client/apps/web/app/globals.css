@@ -937,3 +937,107 @@ body:has(.chat-room),
   .chat-bar-weather{display:none}
   .msg-bubble{max-width:88%}
 }
+
+/* ===== MOBILE PATCH ===== */
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:clip}
+
+@media (hover:none){
+  .feature-card:hover,.cloth-card:hover,.chat-chips button:hover{transform:none}
+}
+
+@media (max-width:1050px){
+  body{min-height:100dvh}
+  .content-page{min-height:calc(100dvh - 160px)}
+  .reveal-left,.reveal-right{transform:translateY(40px)}
+
+  /* Chat: khung cố định, chỉ vùng tin nhắn cuộn */
+  .chat-room{height:calc(100dvh - 76px - 24px)}
+  .chat-panel{height:100%;grid-template-rows:auto minmax(0,1fr)}
+  .chat-side{padding:14px 16px;gap:12px;overflow:visible}
+  .chat-title p{display:none}
+  .chat-title h1{font-size:22px;margin-bottom:10px}
+  .chat-pane{min-height:0}
+  .chat-foot{padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+}
+
+@media (max-width:680px){
+  input,select,textarea{font-size:16px !important}   /* chống iOS zoom */
+  .chat-compose input,.stylist-request input{font-size:16px}
+
+  .icon-btn,.avatar{width:44px;height:44px}
+  .site-footer .footer-col a{padding:4px 0}
+
+  /* Trang chủ */
+  .hero-copy h1{font-size:34px;letter-spacing:-1px}
+  .hero-copy p{font-size:15px}
+  .hero-actions{flex-wrap:wrap}
+  .hero-actions .btn{flex:1 1 100%}
+  .hero-visual{min-height:340px}
+  .about-card{margin:40px auto;padding:32px 20px}
+
+  /* Tủ đồ */
+  .panel-single{padding:16px;gap:18px}
+  .clothes-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .wardrobe-side .filter-panel{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+  .wardrobe-side .filter{width:auto;white-space:nowrap;gap:8px;background:#f3f6fb}
+
+  /* Nhận diện / chi tiết */
+  .recognition-image-card{min-height:360px}
+  .info-row,.tag-line{grid-template-columns:100px 1fr}
+  .mini-items{grid-template-columns:repeat(2,1fr)}
+
+  /* Lịch phối đồ */
+  .week-page .day-card{padding:16px 14px}
+  .week-page .day-card>strong{font-size:20px}
+  .week-page .day-card>span,
+  .week-page .day-card b,
+  .week-page .day-weather{font-size:15px}
+  .week-page .day-card-items{height:auto;min-height:170px}
+  .week-page .day-card-items img{height:170px}
+  .week-dots button{width:12px;height:12px;margin:0 2px}
+
+  /* Dialog */
+  .outfit-dialog-backdrop{padding:12px}
+  .outfit-dialog{padding:18px;max-height:calc(100dvh - 24px)}
+
+  /* Nút nổi */
+  .chat-fab{bottom:calc(18px + env(safe-area-inset-bottom))}
+  .chat-widget-panel{bottom:calc(88px + env(safe-area-inset-bottom))}
+}
+
+/* ===== Bottom tab bar (chỉ mobile/tablet) ===== */
+.tab-bar{display:none}
+
+@media (max-width:1050px){
+  .tab-bar{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(14px);
+    border-top:1px solid var(--header-blue-line);
+    box-shadow:0 -8px 24px rgba(55,88,139,.10);
+  }
+  .tab-bar a{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;min-height:52px;border-radius:12px;
+    font-size:11px;font-weight:600;color:#75819a;
+  }
+  .tab-dot{width:6px;height:6px;border-radius:50%;background:transparent}
+  .tab-bar a.active{color:var(--blue);background:#eaf2ff}
+  .tab-bar a.active .tab-dot{background:var(--blue)}
+
+  /* chừa chỗ cho tab bar */
+  .page-shell{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .site-footer{margin-bottom:0}
+  .chat-room{height:calc(100dvh - 76px - 84px - env(safe-area-inset-bottom))}
+  .chat-fab{bottom:calc(76px + env(safe-area-inset-bottom))}
+  .chat-widget-panel{bottom:calc(146px + env(safe-area-inset-bottom))}
+}
+
+@media (max-width:680px){
+  .header-logout{display:none} /* chuyển nút đăng xuất vào trang profile */
+  .brand{font-size:18px}
+}

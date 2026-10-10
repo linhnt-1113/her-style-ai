@@ -26,5 +26,5 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Database migration failed. Check PostgreSQL and DATABASE_URL in ai\.env.'
 }
 
-Write-Host 'Starting HerStyle AI API at http://127.0.0.1:8000 ...' -ForegroundColor Green
-& $pythonPath -m uvicorn herstyle_ai.api.app:app --host 127.0.0.1 --port 8000 --reload
+Write-Host 'Starting HerStyle AI API on port 8000 (available to this computer and local network) ...' -ForegroundColor Green
+& $pythonPath -m uvicorn herstyle_ai.api.app:app --host 0.0.0.0 --port 8000 --reload
